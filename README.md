@@ -1,6 +1,7 @@
 # postman-utils
 Postman utilities functions
 
+```javascript
 if (typeof pmutil == "undefined") {
    var url = "https://raw.githubusercontent.com/tarunlalwani/postman-utils/master/pmutils.js";
    console.log("pmutil not found. loading from " + url);
@@ -8,3 +9,4 @@ if (typeof pmutil == "undefined") {
       eval(res.text());
    }
 }
+```
