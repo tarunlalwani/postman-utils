@@ -7,6 +7,6 @@ if (typeof pmutil == "undefined") {
    console.log("pmutil not found. loading from " + url);
    pm.sendRequest(url, function(err,res) {
       eval(res.text());
-   }
+   });
 }
 ```
