@@ -218,6 +218,9 @@ if (typeof PMUtil === "undefined") {
                         return a[b];
                     })
                 }
+
+                lastObject[path[path.length - 1]] = value
+                return value;
             }
 
             this.remove = (obj, path) => {
