@@ -1,0 +1,4 @@
+{
+ "name": "{{myData}}"
+ "field": "testing of {{myData}}"
+}
