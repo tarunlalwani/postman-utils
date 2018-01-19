@@ -1,4 +1,5 @@
 {
  "name": "{{myData}}",
- "field": "testing of {{myData}}"
+ "field": "testing of {{myData}}",
+ "aaa": "comming from metadata - {{aaa}}"
 }
