@@ -1,5 +1,6 @@
 if (typeof PMUtil === "undefined") {
     let globalEval = eval;
+
     PMUtil = function () {
         let self = this;
         let debug = false;
@@ -17,24 +18,31 @@ if (typeof PMUtil === "undefined") {
 
         this.log = log;
 
-        cache = {};
-
         this.fetch = (url) => new Promise((resolve, reject) => pm.sendRequest(url, (err, res) => err ? reject(err) : resolve(res)));
 
         this.get = this.fetch;
 
+        let cache;
+        cache = pm.globals.has("__pmutil_cache") ? JSON.parse(pm.globals.get('__pmutil_cache')) : {}
+
+
+        const cache_has_key = key => key in cache
+        const cache_get = key => cache[key]
+        const cache_set = (key, value) => {
+            cache[key] = value
+            pm.globals.set("__pmutil_cache", JSON.parse(cache))
+        }
+
         this.getJSON = async url => {
-            if (url in cache) {
-                return JSON.parse(cache[url]);
+            if (cache_has_key(url)) {
+                return JSON.parse(cache_get(url));
             }
 
             let res = await this.get(url);
-            cache[url] = res.text();
+            cache_set(url, res.text());
             return res.json();
         };
-        // async function loadJSONGitFolder(url, pattern) {
-        //     return "tarun";
-        // }
+
         this.loadGitFolder = async (url, pattern) => {
             pattern = pattern || ".*";
             pattern = typeof pattern === "string" ? new RegExp(pattern) : pattern
@@ -51,19 +59,18 @@ if (typeof PMUtil === "undefined") {
             log("loadJSONGitFolder.data", data);
             for (const file of data) {
                 let res = await this.getTemplate(file["download_url"]);
-                cache[file.name] = res;
-                cache[file.download_url] = res;
+                cache_set(file.name, res);
             }
 
         };
 
         this.getTemplate = async url => {
-            if (url in cache) {
-                return cache[url];
+            if (cache_has_key(url)) {
+                return cache_get(url);
             }
             let res = await this.get(url)
-            cache[url] = res.text();
-            return cache[url];
+            cache_set(url, res.text());
+            return res.text();
         }
 
         this.loadScript = async url => globalEval(await this.getTemplate(url));
@@ -230,22 +237,22 @@ if (typeof PMUtil === "undefined") {
                 return {}
             return JSON.parse(m[1]);
         }
-        
+
         this.processMetadata = async metaData => {
             // if this is the first request then we should process the random variable generation
             if ('template' in metaData) {
                 pm.environment.set('postBody', await this.getTemplate(metaData['template']))
             }
-            
+
+            if ('load_random_environment' in metaData) {
+                if (metaData['load_random_environment'])
+                    this.loadRandomEnvironmentVariables();
+            }
+
             if ('random' in metaData) {
                 for (key in metaData['random']) {
                     pm.environment.set(key, this.resolveParams(metaData['random'][key]))
                 }
-            }
-            
-            if ('load_random_environment' in metaData) {
-                if (metaData['load_random_environment'])
-                   this.loadRandomEnvironmentVariables();
             }
         }
     }
