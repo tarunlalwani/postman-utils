@@ -253,6 +253,10 @@ if (typeof PMUtil === "undefined") {
 
     pmutil = new PMUtil()
     log = pmutil.log;
+    if (typeof init === "function") {
+        log("Running the init function")
+        init();
+    }
 } else {
     log("PMUtils already loaded");
 
