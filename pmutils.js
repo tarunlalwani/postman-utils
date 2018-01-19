@@ -210,16 +210,15 @@ if (typeof PMUtil === "undefined") {
 
             this.set = (obj, path, value) => {
                 path = this.pathToArray(path)
-                let lastObject = path.slice(0, -1).reduce((a, b) => {
-                    if (a == "$")
-                        a = obj;
-                    return a[b];
-                })
-
-                lastObject[path[path.length - 1]] = value
-                return value;
-            }
-
+                let lastObject = obj;
+                if (path.length > 2) {
+                    lastObject = path.slice(0, -1).reduce((a, b) => {
+                        if (a == "$")
+                            a = obj;
+                        return a[b];
+                    })
+                }
+        
             this.remove = (obj, path) => {
                 path = this.pathToArray(path)
                 let lastObject = path.slice(0, -1).reduce((a, b) => {
