@@ -130,10 +130,10 @@ if (typeof PMUtil === "undefined") {
             } else {
                 paramPattern = /({{(\$[a-z_]+)(?:\((['"a-z0-9, ]+)\))?}})/ig;
             }
+            let m;
 
             do {
                 paramPattern.lastIndex = 0;
-                let m;
                 if (m = paramPattern.exec(v)) {
                     let [, replacer, funcName, call,] = m;
 
@@ -252,6 +252,7 @@ if (typeof PMUtil === "undefined") {
 
 
     pmutil = new PMUtil()
+
     log = pmutil.log;
     if (typeof init === "function") {
         log("Running the init function")
