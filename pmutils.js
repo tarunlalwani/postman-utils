@@ -30,7 +30,7 @@ if (typeof PMUtil === "undefined") {
         const cache_get = key => cache[key]
         const cache_set = (key, value) => {
             cache[key] = value
-            pm.globals.set("__pmutil_cache", JSON.parse(cache))
+            pm.globals.set("__pmutil_cache", JSON.stringify(cache))
         }
 
         this.cache = {
