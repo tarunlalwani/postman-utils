@@ -32,7 +32,7 @@ if (typeof PMUtil === "undefined") {
             cache[key] = value
             pm.globals.set("__pmutil_cache", JSON.parse(cache))
         }
-        
+
         this.cache = {
             get: cache_get,
             set: cache_set,
@@ -218,7 +218,8 @@ if (typeof PMUtil === "undefined") {
                         return a[b];
                     })
                 }
-        
+            }
+
             this.remove = (obj, path) => {
                 path = this.pathToArray(path)
                 let lastObject = path.slice(0, -1).reduce((a, b) => {
@@ -276,10 +277,11 @@ if (typeof PMUtil === "undefined") {
 }
 
 /* loading script to be used at collection level
+let forceReload = false;
 if (typeof pmutil == "undefined") {
     var url = "https://raw.githubusercontent.com/tarunlalwani/postman-utils/master/pmutils.js";
 
-    if (pm.globals.has("pmutiljs"))
+    if (pm.globals.has("pmutiljs") && !forceReload)
         eval(pm.globals.has("pmutiljs"))
     else {
         console.log("pmutil not found. loading from " + url);
