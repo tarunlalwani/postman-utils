@@ -175,7 +175,12 @@ if (typeof PMUtil === "undefined") {
             } while (m)
             return v;
         }
-
+        this.deepCloneObject = (obj) => JSON.parse(JSON.stringify(obj))
+        
+        this.resolveParamsObject = (obj) => {
+            return JSON.parse(JSON.stringify(obj, (k, v) => typeof v === "string" ? this.resolveParams(v) : v));
+        }
+        
         this.loadRandomEnvironmentVariables = () => {
             for (const variable in pm.environment.toObject()) {
                 if (variable.startsWith("_")) {
