@@ -186,7 +186,7 @@ if (typeof PMUtil === "undefined") {
 
         const JSONPath = function () {
             this.pathToArray = path => path
-                .split(/[.\[]/)
+                .split(/[.\[\]]/)
                 .map(f => {
                     let v = f;
                     if (v !== '' && !isNaN(v) && isFinite(v))
