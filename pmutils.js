@@ -177,8 +177,8 @@ if (typeof PMUtil === "undefined") {
         }
         this.deepCloneObject = (obj) => JSON.parse(JSON.stringify(obj))
         
-        this.resolveParamsObject = (obj) => {
-            return JSON.parse(JSON.stringify(obj, (k, v) => typeof v === "string" ? this.resolveParams(v) : v));
+        this.resolveParamsObject = (obj, resolvePMVariables) => {
+            return JSON.parse(JSON.stringify(obj, (k, v) => typeof v === "string" ? this.resolveParams(v, resolvePMVariables) : v));
         }
         
         this.loadRandomEnvironmentVariables = () => {
@@ -190,6 +190,19 @@ if (typeof PMUtil === "undefined") {
         };
 
         const JSONPath = function () {
+            this.performOperations= (data, operations) => {
+                for (let op in operations){
+                    let json_path = operations[op]["json_path"]
+                    let value = operations[op]["value"];
+
+                    if (value == "##delete##")
+                        this.remove(data, json_path)
+                    else
+                        this.set(data, json_path, value)
+
+                }
+            }
+
             this.pathToArray = path => path
                 .split(/[.\[\]]/)
                 .map(f => {
@@ -218,7 +231,7 @@ if (typeof PMUtil === "undefined") {
                 let lastObject = obj;
                 if (path.length > 2) {
                     lastObject = path.slice(0, -1).reduce((a, b) => {
-                        if (a == "$")
+                        if (a === "$")
                             a = obj;
                         return a[b];
                     })
@@ -231,7 +244,7 @@ if (typeof PMUtil === "undefined") {
             this.remove = (obj, path) => {
                 path = this.pathToArray(path)
                 let lastObject = path.slice(0, -1).reduce((a, b) => {
-                    if (a == "$")
+                    if (a === "$")
                         a = obj;
                     return a[b];
                 })
@@ -241,6 +254,18 @@ if (typeof PMUtil === "undefined") {
         }
 
         this.jp = new JSONPath();
+        this.getPostBody = async (url) => {
+            if (url) {
+                let postBody = await this.getTemplate(url)
+                pm.environment.set("postBody", postBody);
+            }
+            else if (!pm.environment.has("postBody"))
+                    throw Error("postBody template has not been defined and neither a url has been provided")
+            return pm.environment.get("postBody")
+        }
+
+        this.setPostBody = (postBody) => pm.environment.set("postBody", JSON.stringify(this.resolveParamsObject(postBody)))
+
 
         this.getRequestMetadata = () => {
             let description = postman["__execution"].request.description.content;
@@ -287,7 +312,6 @@ if (typeof PMUtil === "undefined") {
 /* loading script to be used at collection level
 if (typeof pmutil == "undefined") {
     var url = "https://raw.githubusercontent.com/tarunlalwani/postman-utils/master/pmutils.js";
-
     if (pm.globals.has("pmutiljs"))
         eval(pm.globals.has("pmutiljs"))
     else {
