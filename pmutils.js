@@ -168,7 +168,6 @@ if (typeof PMUtil === "undefined") {
                         let replace_data = this.rand[funcName].apply(this.rand, callParams);
                         v = v.replace(replacer, replace_data)
                     } else {
-                        console.log("we are looking for " + funcName)
                         v = v.replace(replacer, pm.variables.get(funcName))
                     }
                 }
