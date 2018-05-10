@@ -312,7 +312,7 @@ if (typeof PMUtil === "undefined") {
 if (typeof pmutil == "undefined") {
     var url = "https://raw.githubusercontent.com/tarunlalwani/postman-utils/master/pmutils.js";
     if (pm.globals.has("pmutiljs"))
-        eval(pm.globals.has("pmutiljs"))
+        eval(pm.globals.get("pmutiljs"))
     else {
         console.log("pmutil not found. loading from " + url);
         pm.sendRequest(url, function (err, res) {
@@ -321,4 +321,9 @@ if (typeof pmutil == "undefined") {
         });
     }
 }
+
+*/
+
+/* To use the functions wherever you need use below
+   eval(pm.globals.get("pmutiljs"))
 */
